@@ -5,12 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using FinalProjectApi.Data;
+using FinalProjectApi.Models;
 
 namespace FinalProjectApi
 {
     public class Program
     {
-        public static void Main(string[] args)
+		private static Database _orderDatabase;
+		public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
                 .UseKestrel()
@@ -22,5 +25,19 @@ namespace FinalProjectApi
 
             host.Run();
         }
-    }
+
+		public static Database OrderDatabase
+		{
+			get
+			{
+				if (_orderDatabase == null)
+				{
+					_orderDatabase = new Database("Orders");
+					_orderDatabase.CreateTable<Order>();
+					return _orderDatabase;
+				}
+				return _orderDatabase;
+			}
+		}
+	}
 }

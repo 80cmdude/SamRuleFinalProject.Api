@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using FinalProjectApi.Models;
 
 namespace FinalProjectApi.Controllers
 {
@@ -13,8 +14,14 @@ namespace FinalProjectApi.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
+			Order test = new Order()
+			{
+				Item = "Cake"
+			};
+			Program.OrderDatabase.SaveItem(test);
+			var result = Program.OrderDatabase.GetItems<Order>();
+			return new string[] { "value1", "value2" };
+		}
 
         // GET api/values/5
         [HttpGet("{id}")]
