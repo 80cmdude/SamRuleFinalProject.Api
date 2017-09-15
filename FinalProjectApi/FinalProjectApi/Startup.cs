@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectApi
 {
     public class Startup
     {
+		private IHostingEnvironment _env;
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -19,6 +21,8 @@ namespace FinalProjectApi
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
+			_env = env;
             Configuration = builder.Build();
         }
 
@@ -28,7 +32,14 @@ namespace FinalProjectApi
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(opt => 
+			{
+				if (!_env.IsProduction())
+				{
+					opt.SslPort = 44357;
+				}
+				opt.Filters.Add(new RequireHttpsAttribute());
+			});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
