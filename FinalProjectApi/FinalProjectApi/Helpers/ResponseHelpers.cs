@@ -18,5 +18,10 @@ namespace FinalProjectApi.Helpers
 			string response = JsonConvert.SerializeObject(message);
 			return response;
 		}
+
+		public static string TokenFailedResponse()
+		{
+			return FailureResponse("Invalid Token");
+		}
 	}
 }
