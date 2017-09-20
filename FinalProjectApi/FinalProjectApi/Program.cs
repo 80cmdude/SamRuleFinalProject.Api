@@ -13,6 +13,8 @@ namespace FinalProjectApi
     public class Program
     {
 		private static Database _orderDatabase;
+		private static Database _UserDatabase;
+
 		public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
@@ -37,6 +39,20 @@ namespace FinalProjectApi
 					return _orderDatabase;
 				}
 				return _orderDatabase;
+			}
+		}
+
+		public static Database UserDatabase
+		{
+			get
+			{
+				if (_UserDatabase == null)
+				{
+					_UserDatabase = new Database("Users");
+					_UserDatabase.CreateTable<User>();
+					return _UserDatabase;
+				}
+				return _UserDatabase;
 			}
 		}
 	}
