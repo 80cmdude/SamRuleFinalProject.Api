@@ -24,7 +24,8 @@ namespace FinalProjectApi.Controllers
 		[HttpPost]
 		public string PostSignOut([FromBody]User user)
 		{
-			TokenHelper.ValidateToken(Request.Headers, user.ID);
+			if (!TokenHelper.ValidateToken(Request.Headers, user.ID))
+				return ResponseHelpers.TokenFailedResponse();
 
 			return "e";
 		}
