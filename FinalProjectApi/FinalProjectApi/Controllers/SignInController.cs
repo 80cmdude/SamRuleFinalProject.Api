@@ -16,10 +16,10 @@ namespace FinalProjectApi.Controllers
 		// POST: api/SignIn
 		[Route("api/SignIn")]
 		[HttpPost]
-		public string Post([FromBody]User user)
+		public Dictionary<string,string> Post([FromBody]User user)
 		{
 			object message;
-			string response;
+			Dictionary<string, string> response = new Dictionary<string, string>();
 			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeNumber = ?";
 
 			try
@@ -27,7 +27,7 @@ namespace FinalProjectApi.Controllers
 				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] { $"{user.EmployeeNumber}" });
 
 				if (existingUser.Count == 0)
-					return ResponseHelpers.FailureResponse("User does not exist");
+					return ResponseHelpers.FailureResponse(response, "User does not exist");
 
 				if (existingUser[0].Password == user.Password)
 				{
@@ -36,37 +36,34 @@ namespace FinalProjectApi.Controllers
 					var success = Program.UserDatabase.SaveItem(existingUser[0]);
 					if (success != 0)
 					{
-						message = new
-						{
-							success = true,
-							Id = existingUser[0].ID,
-							Token = existingUser[0].Token,
-						};
-						response = JsonConvert.SerializeObject(message);
+						response.Add("success", "true");
+						response.Add("id", $"{existingUser[0].ID}");
+						response.Add("token", $"{existingUser[0].Token}");
 						return response;
 					}
 					else
 					{
-						return ResponseHelpers.FailureResponse("Failed adding user to database");
+						return ResponseHelpers.FailureResponse(response, "Failed adding user to database");
 					}
 				}
-				return "Invalid Password";
-				
+				return ResponseHelpers.FailureResponse(response, "Invalid Password");
+
 			}
 			catch (Exception e)
 			{
-				return ResponseHelpers.FailureResponse("Information sent was not correct");
+				return ResponseHelpers.FailureResponse(response, "Information sent was not correct");
 			}
 		}
 
 		[Route("api/SignOut")]
 		[HttpPost]
-		public string PostSignOut([FromBody]User user)
+		public Dictionary<string,string> PostSignOut([FromBody]User user)
 		{
+			Dictionary<string, string> response = new Dictionary<string, string>();
 			if (!TokenHelper.ValidateToken(Request.Headers, user.ID))
-				return ResponseHelpers.TokenFailedResponse();
+				return ResponseHelpers.TokenFailedResponse(response);
 
-			return "e";
+			return response;
 		}
     }
 }

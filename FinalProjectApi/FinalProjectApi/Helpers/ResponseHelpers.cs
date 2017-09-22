@@ -8,20 +8,17 @@ namespace FinalProjectApi.Helpers
 {
     public static class ResponseHelpers
     {
-		public static string FailureResponse(string reason = "Something went wrong")
+		public static Dictionary<string,string> FailureResponse(Dictionary<string,string> response, string reason = "Something went wrong")
 		{
-			object message = new
-			{
-				Success = false,
-				Reason = reason,
-			};
-			string response = JsonConvert.SerializeObject(message);
+			response.Add("success", "false");
+			response.Add("reason", reason);
+
 			return response;
 		}
 
-		public static string TokenFailedResponse()
+		public static Dictionary<string,string> TokenFailedResponse(Dictionary<string, string> response)
 		{
-			return FailureResponse("Invalid Token");
+			return FailureResponse(response, "Invalid Token");
 		}
 	}
 }
