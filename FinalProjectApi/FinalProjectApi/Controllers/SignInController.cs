@@ -16,10 +16,8 @@ namespace FinalProjectApi.Controllers
 		// POST: api/SignIn
 		[Route("api/SignIn")]
 		[HttpPost]
-		public Dictionary<string,string> Post([FromBody]User user)
+		public IActionResult Post([FromBody]User user)
 		{
-			object message;
-			Dictionary<string, string> response = new Dictionary<string, string>();
 			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeNumber = ?";
 
 			try
@@ -27,31 +25,35 @@ namespace FinalProjectApi.Controllers
 				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] { $"{user.EmployeeNumber}" });
 
 				if (existingUser.Count == 0)
-					return ResponseHelpers.FailureResponse(response, "User does not exist");
+				{
+					Response.Headers.Add("Error", $"User does not exist");
+					return BadRequest();
+				}
 
 				if (existingUser[0].Password == user.Password)
 				{
 					existingUser[0].Token = TokenHelper.GenerateToken(user.FirstName, user.LastName);
 
 					var success = Program.UserDatabase.SaveItem(existingUser[0]);
-					if (success != 0)
+
+					User currentUser = new User()
 					{
-						response.Add("success", "true");
-						response.Add("id", $"{existingUser[0].ID}");
-						response.Add("token", $"{existingUser[0].Token}");
-						return response;
-					}
-					else
-					{
-						return ResponseHelpers.FailureResponse(response, "Failed adding user to database");
-					}
+						FirstName = user.FirstName,
+						LastName = user.LastName,
+						EmployeeNumber = user.EmployeeNumber,
+						ID = existingUser[0].ID,
+						Token = existingUser[0].Token,
+					};
+					return Ok(currentUser);
 				}
-				return ResponseHelpers.FailureResponse(response, "Invalid Password");
+				Response.Headers.Add("Error", $"Invalid Password");
+				return BadRequest();
 
 			}
 			catch (Exception e)
 			{
-				return ResponseHelpers.FailureResponse(response, "Information sent was not correct");
+				Response.Headers.Add("Error", $"Information sent was not correct");
+				return BadRequest();
 			}
 		}
 

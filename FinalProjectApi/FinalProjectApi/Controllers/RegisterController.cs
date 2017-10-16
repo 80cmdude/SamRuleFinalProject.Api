@@ -16,16 +16,19 @@ namespace FinalProjectApi.Controllers
     {
 		// POST: api/Register
 		[HttpPost]
-		public Dictionary<string,string> Post([FromBody]User newUser)
+		public IActionResult Post([FromBody]User newUser)
 		{
-			Dictionary<string,string> response = new Dictionary<string, string>();
 			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeNumber = ?";
 
 			try
 			{
 				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] {$"{newUser.EmployeeNumber}"} );
 				if (existingUser.Count > 0)
-					return ResponseHelpers.FailureResponse(response, "User already exists");
+				{
+					Response.Headers.Add("Error", $"The user {newUser.EmployeeNumber} already exists");
+					return BadRequest();
+				}
+					
 
 				User user = new User()
 				{
@@ -38,19 +41,18 @@ namespace FinalProjectApi.Controllers
 				var success = Program.UserDatabase.SaveItem(user);
 				if (success == 1)
 				{
-					response.Add("success", "true");
-					response.Add("token", $"{user.Token}");
-					response.Add("id", $"{user.ID}");
-					return response;
+					return Ok(user);
 				}
 				else
 				{
-					return ResponseHelpers.FailureResponse(response, "Failed adding user to database");
+					Response.Headers.Add("Error", $"Failed adding user to the database");
+					return BadRequest();
 				}
 			}
 			catch (Exception e)
 			{
-				return ResponseHelpers.FailureResponse(response, "Information sent was not correct");
+				Response.Headers.Add("Error", $"Information sent was not correct");
+				return BadRequest();
 			}
 		}
 	}
