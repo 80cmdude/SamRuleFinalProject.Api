@@ -13,7 +13,8 @@ namespace FinalProjectApi
     public class Program
     {
 		private static Database _orderDatabase;
-		private static Database _UserDatabase;
+		private static Database _userDatabase;
+		private static Database _transactionDatabase;
 
 		public static void Main(string[] args)
         {
@@ -46,13 +47,27 @@ namespace FinalProjectApi
 		{
 			get
 			{
-				if (_UserDatabase == null)
+				if (_userDatabase == null)
 				{
-					_UserDatabase = new Database("Users");
-					_UserDatabase.CreateTable<User>();
-					return _UserDatabase;
+					_userDatabase = new Database("Users");
+					_userDatabase.CreateTable<User>();
+					return _userDatabase;
 				}
-				return _UserDatabase;
+				return _userDatabase;
+			}
+		}
+
+		public static Database TransactionsDatabase
+		{
+			get
+			{
+				if (_transactionDatabase == null)
+				{
+					_transactionDatabase = new Database("Transactions");
+					_transactionDatabase.CreateTable<Transaction>();
+					return _transactionDatabase;
+				}
+				return _transactionDatabase;
 			}
 		}
 	}

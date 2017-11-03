@@ -15,12 +15,13 @@ namespace FinalProjectApi.Helpers
 			return token;
 		}
 
-		public static bool ValidateToken(IHeaderDictionary headers, int id)
+		public static bool ValidateToken(IHeaderDictionary headers)
 		{
 			string FullToken;
 			if (!headers.TryGetValue("Authorization", out var authToken))
 				return false;
-
+			if (!headers.TryGetValue("Id", out var id))
+				return false;
 			FullToken = authToken.ToString();
 			var token = FullToken.Substring(6);
 

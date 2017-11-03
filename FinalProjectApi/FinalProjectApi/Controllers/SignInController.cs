@@ -56,16 +56,5 @@ namespace FinalProjectApi.Controllers
 				return BadRequest();
 			}
 		}
-
-		[Route("api/SignOut")]
-		[HttpPost]
-		public Dictionary<string,string> PostSignOut([FromBody]User user)
-		{
-			Dictionary<string, string> response = new Dictionary<string, string>();
-			if (!TokenHelper.ValidateToken(Request.Headers, user.ID))
-				return ResponseHelpers.TokenFailedResponse(response);
-
-			return response;
-		}
     }
 }

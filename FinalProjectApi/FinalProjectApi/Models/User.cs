@@ -12,5 +12,6 @@ namespace FinalProjectApi.Models
 		public string LastName { get; set; }
 		public string Password { get; set; }
 		public string Token { get; set; }
+		public decimal Balance { get; set; }
     }
 }
