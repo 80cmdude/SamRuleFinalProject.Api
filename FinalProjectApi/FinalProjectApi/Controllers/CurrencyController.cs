@@ -15,12 +15,18 @@ namespace FinalProjectApi.Controllers
 		// POST: api/Currency
 		[Route("/api/Transaction")]
 		[HttpPost]
-        public IActionResult PostTransaction([FromBody]Transaction value)
-        {
+		public IActionResult PostTransaction([FromBody]Transaction value)
+		{
 			if (TokenHelper.ValidateToken(Request.Headers))
+			{
+				Response.Headers.Add("Error", "Invalid Token");
 				return BadRequest();
+			}
 			if (!Request.Headers.TryGetValue("Id", out var id))
+			{
+				Response.Headers.Add("Error", "Invalid User Id");
 				return BadRequest();
+			}
 			string queryGetCurrentPoints = "SELECT * FROM USER WHERE ID = ?";
 
 			var User = Program.UserDatabase.Query<User>(queryGetCurrentPoints, new string[] { $"{id}" });
@@ -36,6 +42,28 @@ namespace FinalProjectApi.Controllers
 			Program.UserDatabase.SaveItem<User>(User[0]);
 
 			return Ok(User[0]);
-        }
+		}
+
+		[Route("/api/Balance")]
+		[HttpGet]
+		public IActionResult GetBalance()
+		{
+			if (TokenHelper.ValidateToken(Request.Headers))
+			{
+				Response.Headers.Add("Error", "Invalid Token");
+				return BadRequest();
+			}
+			if (!Request.Headers.TryGetValue("Id", out var id))
+			{
+				Response.Headers.Add("Error", "Invalid User Id");
+				return BadRequest();
+			}
+			string queryGetCurrentPoints = "SELECT * FROM USER WHERE ID = ?";
+
+			var User = Program.UserDatabase.Query<User>(queryGetCurrentPoints, new string[] { $"{id}" });
+			decimal currentBalance = User[0].Balance;
+
+			return Ok(currentBalance);
+		}
     }
 }
