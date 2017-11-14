@@ -35,16 +35,8 @@ namespace FinalProjectApi.Controllers
 					existingUser[0].Token = TokenHelper.GenerateToken(user.FirstName, user.LastName);
 
 					var success = Program.UserDatabase.SaveItem(existingUser[0]);
-
-					User currentUser = new User()
-					{
-						FirstName = user.FirstName,
-						LastName = user.LastName,
-						EmployeeCardNumber = user.EmployeeCardNumber,
-						ID = existingUser[0].ID,
-						Token = existingUser[0].Token,
-					};
-					return Ok(currentUser);
+					
+					return Ok(existingUser[0]);
 				}
 				Response.Headers.Add("Error", $"Invalid Password");
 				return BadRequest();
