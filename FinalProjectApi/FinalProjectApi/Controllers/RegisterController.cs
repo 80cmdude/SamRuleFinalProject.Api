@@ -18,24 +18,26 @@ namespace FinalProjectApi.Controllers
 		[HttpPost]
 		public IActionResult Post([FromBody]User newUser)
 		{
-			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeNumber = ?";
+			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeCardNumber = ?";
 
 			try
 			{
-				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] {$"{newUser.EmployeeNumber}"} );
+				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] {$"{newUser.EmployeeCardNumber}"} );
 				if (existingUser.Count > 0)
 				{
-					Response.Headers.Add("Error", $"The user {newUser.EmployeeNumber} already exists");
+					Response.Headers.Add("Error", $"The user {newUser.EmployeeCardNumber} already exists");
 					return BadRequest();
 				}
 					
 
 				User user = new User()
 				{
-					EmployeeNumber = newUser.EmployeeNumber,
+					EmployeeCardNumber = newUser.EmployeeCardNumber,
 					FirstName = newUser.FirstName,
 					LastName = newUser.LastName,
 					Password = newUser.Password,
+					Email = newUser.Email,
+					PhoneNumber = newUser.PhoneNumber,
 				};
 				user.Token = TokenHelper.GenerateToken(newUser.FirstName, newUser.LastName);
 				var success = Program.UserDatabase.SaveItem(user);

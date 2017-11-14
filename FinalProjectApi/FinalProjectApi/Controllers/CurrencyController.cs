@@ -17,7 +17,7 @@ namespace FinalProjectApi.Controllers
 		[HttpPost]
 		public IActionResult PostTransaction([FromBody]Transaction value)
 		{
-			if (TokenHelper.ValidateToken(Request.Headers))
+			if (!TokenHelper.ValidateToken(Request.Headers))
 			{
 				Response.Headers.Add("Error", "Invalid Token");
 				return BadRequest();
@@ -48,7 +48,7 @@ namespace FinalProjectApi.Controllers
 		[HttpGet]
 		public IActionResult GetBalance()
 		{
-			if (TokenHelper.ValidateToken(Request.Headers))
+			if (!TokenHelper.ValidateToken(Request.Headers))
 			{
 				Response.Headers.Add("Error", "Invalid Token");
 				return BadRequest();

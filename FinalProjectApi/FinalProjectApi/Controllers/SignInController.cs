@@ -18,11 +18,11 @@ namespace FinalProjectApi.Controllers
 		[HttpPost]
 		public IActionResult Post([FromBody]User user)
 		{
-			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeNumber = ?";
+			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeCardNumber = ?";
 
 			try
 			{
-				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] { $"{user.EmployeeNumber}" });
+				var existingUser = Program.UserDatabase.Query<User>(queryCheckUser, new string[] { $"{user.EmployeeCardNumber}" });
 
 				if (existingUser.Count == 0)
 				{
@@ -40,7 +40,7 @@ namespace FinalProjectApi.Controllers
 					{
 						FirstName = user.FirstName,
 						LastName = user.LastName,
-						EmployeeNumber = user.EmployeeNumber,
+						EmployeeCardNumber = user.EmployeeCardNumber,
 						ID = existingUser[0].ID,
 						Token = existingUser[0].Token,
 					};
