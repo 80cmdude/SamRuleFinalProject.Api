@@ -40,6 +40,13 @@ namespace FinalProjectApi.Controllers
 			value.PreviosBalance = currentBalance;
 			value.AddedAmount = value.ProductPrice;
 			value.NewBalance = currentBalance + value.AddedAmount;
+
+			if (value.NewBalance <= 0)
+			{
+				Response.Headers.Add("Error", "Insufficent credit to make payment.");
+				return BadRequest();
+			}
+
 			User[0].Balance = value.NewBalance;
 
 			int transactionID = Program.TransactionsDatabase.SaveItem<Transaction>(value);
