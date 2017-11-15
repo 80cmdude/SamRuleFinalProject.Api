@@ -62,10 +62,7 @@ namespace FinalProjectApi.Controllers
 				Response.Headers.Add("Error", "Invalid User Id");
 				return BadRequest();
 			}
-
-			string queryGetTransactions = "SELECT * FROM Transaction WHERE UserId = ?";
-
-			//var transactions = Program.TransactionsDatabase.Query<Transaction>(queryGetTransactions, new string[] { $"{id}" });
+			
 			var transactions = Program.TransactionsDatabase.GetItems<Transaction>();
 
 			IEnumerable<Transaction> userTransactions = transactions.Where(c => c.UserId == Convert.ToInt32(id)).ToList<Transaction>();
