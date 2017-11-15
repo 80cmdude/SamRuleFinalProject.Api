@@ -34,8 +34,8 @@ namespace FinalProjectApi.Controllers
 
 			value.Date = DateTime.Now;
 			value.PreviosBalance = currentBalance;
-			value.DetuctedAmount = value.ProductPrice;
-			value.NewBalance = currentBalance - value.DetuctedAmount;
+			value.AddedAmount = value.ProductPrice;
+			value.NewBalance = currentBalance + value.AddedAmount;
 			User[0].Balance = value.NewBalance;
 
 			int transactionID = Program.TransactionsDatabase.SaveItem<Transaction>(value);
