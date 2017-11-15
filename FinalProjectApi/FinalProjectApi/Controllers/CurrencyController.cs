@@ -27,11 +27,15 @@ namespace FinalProjectApi.Controllers
 				Response.Headers.Add("Error", "Invalid User Id");
 				return BadRequest();
 			}
+
+			//HERE I WILL SEND OFF THE CREDIT INFROMATION TO BE DEALT WITH BY MY BACK END TEAM.
+
 			string queryGetCurrentPoints = "SELECT * FROM USER WHERE ID = ?";
 
 			var User = Program.UserDatabase.Query<User>(queryGetCurrentPoints, new string[] { $"{id}" });
 			decimal currentBalance = User[0].Balance;
-
+			
+			
 			value.Date = DateTime.Now;
 			value.PreviosBalance = currentBalance;
 			value.AddedAmount = value.ProductPrice;
@@ -42,6 +46,31 @@ namespace FinalProjectApi.Controllers
 			Program.UserDatabase.SaveItem<User>(User[0]);
 
 			return Ok(User[0]);
+		}
+
+		[Route("/api/transactions")]
+		[HttpGet]
+		public IActionResult GetTransactions()
+		{
+			if (!TokenHelper.ValidateToken(Request.Headers))
+			{
+				Response.Headers.Add("Error", "Invalid Token");
+				return BadRequest();
+			}
+			if (!Request.Headers.TryGetValue("Id", out var id))
+			{
+				Response.Headers.Add("Error", "Invalid User Id");
+				return BadRequest();
+			}
+
+			string queryGetTransactions = "SELECT * FROM Transaction WHERE UserId = ?";
+
+			//var transactions = Program.TransactionsDatabase.Query<Transaction>(queryGetTransactions, new string[] { $"{id}" });
+			var transactions = Program.TransactionsDatabase.GetItems<Transaction>();
+
+			IEnumerable<Transaction> userTransactions = transactions.Where(c => c.UserId == Convert.ToInt32(id)).ToList<Transaction>();
+
+			return Ok(userTransactions);
 		}
 
 		[Route("/api/Balance")]
