@@ -16,7 +16,7 @@ namespace FinalProjectApi.Controllers
 		// POST: api/SignIn
 		[Route("api/SignIn")]
 		[HttpPost]
-		public IActionResult Post([FromBody]User user)
+		public IActionResult Post([FromBody]User user, bool isUnitTest = false)
 		{
 			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeCardNumber = ?";
 
@@ -26,7 +26,10 @@ namespace FinalProjectApi.Controllers
 
 				if (existingUser.Count == 0)
 				{
-					Response.Headers.Add("Error", $"User does not exist");
+					if (!isUnitTest)
+					{
+						Response.Headers.Add("Error", $"User does not exist");
+					}
 					return BadRequest();
 				}
 
@@ -38,13 +41,19 @@ namespace FinalProjectApi.Controllers
 					
 					return Ok(existingUser[0]);
 				}
-				Response.Headers.Add("Error", $"Invalid Password");
+				if (!isUnitTest)
+				{
+					Response.Headers.Add("Error", $"Invalid Password");
+				}
 				return BadRequest();
 
 			}
 			catch (Exception e)
 			{
-				Response.Headers.Add("Error", $"Information sent was not correct");
+				if (!isUnitTest)
+				{
+					Response.Headers.Add("Error", $"Information sent was not correct");
+				}
 				return BadRequest();
 			}
 		}

@@ -16,7 +16,7 @@ namespace FinalProjectApi.Controllers
     {
 		// POST: api/Register
 		[HttpPost]
-		public IActionResult Post([FromBody]User newUser)
+		public IActionResult Post([FromBody]User newUser, bool isUnitTest = false)
 		{
 			string queryCheckUser = "SELECT * FROM USER WHERE EmployeeCardNumber = ?";
 
@@ -29,7 +29,6 @@ namespace FinalProjectApi.Controllers
 					return BadRequest();
 				}
 					
-
 				User user = new User()
 				{
 					EmployeeCardNumber = newUser.EmployeeCardNumber,
@@ -47,13 +46,19 @@ namespace FinalProjectApi.Controllers
 				}
 				else
 				{
-					Response.Headers.Add("Error", $"Failed adding user to the database");
+					if (!isUnitTest)
+					{
+						Response.Headers.Add("Error", $"Failed adding user to the database");
+					}
 					return BadRequest();
 				}
 			}
 			catch (Exception e)
 			{
-				Response.Headers.Add("Error", $"Information sent was not correct");
+				if (!isUnitTest)
+				{
+					Response.Headers.Add("Error", $"Information sent was not correct");
+				}
 				return BadRequest();
 			}
 		}
